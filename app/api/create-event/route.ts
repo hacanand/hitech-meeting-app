@@ -1,48 +1,48 @@
-import axios from "axios";
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextRequest, NextResponse } from "next/server";
+// import axios from "axios";
+// import { NextApiRequest, NextApiResponse } from "next";
+// import { NextRequest, NextResponse } from "next/server";
 
-// Replace 'YOUR_CALENDLY_API_KEY' with your actual Calendly API key
-// const apiToken = "YOUR_CALENDLY_API_KEY";
-
-
+// // Replace 'YOUR_CALENDLY_API_KEY' with your actual Calendly API key
+// // const apiToken = "YOUR_CALENDLY_API_KEY";
 
 
-const CALENDLY_API_TOKEN = process.env.ACCESS_TOKEN;
 
-// Function to create an event in Calendly
-export  async function GET(req:NextApiRequest, res:NextApiResponse) {
+
+// const CALENDLY_API_TOKEN = process.env.ACCESS_TOKEN;
+
+// // Function to create an event in Calendly
+// export  async function GET(req:NextApiRequest, res:NextApiResponse) {
  
-    const apiUrl = "https://api.example.com/scheduled_events";
-    const token = process.env.ACCESS_TOKEN;
+//     const apiUrl = "https://api.example.com/scheduled_events";
+//     const token = process.env.ACCESS_TOKEN;
 
-    try {
-      // Make the API request
-      const response = await axios.get(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+//     try {
+//       // Make the API request
+//       const response = await axios.get(apiUrl, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
 
-      if (response.status === 200) {
-        // Respond with the list of scheduled events
-        return NextResponse.json({
-          data: response.data,
-        });
-      } else {
-        // Respond with an error message
-        return NextResponse.json({
-          error: "Error fetching scheduled events",
-        });
-      }
-    } catch (error) {
-      // Respond with an error message
-      return NextResponse.json({
-        error: "Error fetching scheduled events",
-      });
-    }
+//       if (response.status === 200) {
+//         // Respond with the list of scheduled events
+//         return NextResponse.json({
+//           data: response.data,
+//         });
+//       } else {
+//         // Respond with an error message
+//         return NextResponse.json({
+//           error: "Error fetching scheduled events",
+//         });
+//       }
+//     } catch (error) {
+//       // Respond with an error message
+//       return NextResponse.json({
+//         error: "Error fetching scheduled events",
+//       });
+//     }
    
-}
+// }
 
 
 
