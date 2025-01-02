@@ -58,50 +58,88 @@ export const listEvents = async (auth: Auth.OAuth2Client) => {
 //  */
 
 
-export function getAcceptedAttendees(
-  auth: Auth.OAuth2Client,
-  eventId: string,
-) {
+ 
+
+// export async function getAcceptedAttendees(
+//   auth: any, // Replace `any` with the appropriate Auth.OAuth2Client type if available
+//   eventId: string
+// ) {
+//   const calendar = google.calendar({ version: "v3", auth });
+
+//   try {
+//     // Use Promises for handling API requests
+//     const event = await calendar.events.get({ eventId });
+
+//     // Extract attendees from the event data
+//     const attendees = event?.data?.attendees || [];
+
+//     // Return the attendee list along with a success message
+//     return {
+//       message: "Attendees retrieved successfully",
+//       attendees,
+//       status: 200,
+//     };
+//   } catch (err: any) {
+//     if (err.response?.status === 404) {
+//       console.error("Event not found. Verify the event ID or calendar access.");
+//       return {
+//         message: "Event not found",
+//         error: "Verify the event ID or calendar access",
+//         status: 404,
+//       };
+//     }
+//     console.error("Error retrieving event:", err);
+//     return {
+//       message: "Error retrieving event",
+//       error: err.message,
+//       status: 500,
+//     };
+//   }
+// }
+export async function getAcceptedAttendees(auth: any, eventId: string) {
   const calendar = google.calendar({ version: "v3", auth });
 
-  calendar.events.get(
-    {
-      // Query the primary calendar
+  try {
+    // Use async/await for the Google Calendar API
+    const event = await calendar.events.get({
+      calendarId: "primary", // Ensure you're querying the correct calendar
       eventId: eventId,
-    },
-    (err: any, event) => {
-      if (err) {
-        if (err.response?.status === 404  ) {
-          console.error(
-            "Event not found. Verify the event ID or calendar access."
-          );
-          return NextResponse.json({
-            message: "Event not found",
-            error: "Verify the event ID or calendar access",
-            status: 404,
-          });
-        }
-        console.error("Error retrieving event:", err);
-        return NextResponse.json({
-          message: "Error retrieving event",
-          error: err.message,
-          status: 500,
-        });
-      }
+    });
 
-      const attendees = event?.data?.attendees || [];
-      // res.status(200).json({
-      //   message: "Attendees retrieved successfully",
-      //   attendees,
-      // });
-      return NextResponse.json({
-        message: "Attendees retrieved successfully",
-        attendees:attendees,
-        status: 200,
-      });
+    // Extract attendees or set an empty array if none exist
+    const attendees = event?.data?.attendees || [];
+
+    // Optionally filter for "accepted" attendees
+    // const acceptedAttendees = attendees.filter(
+    //   (attendee) => attendee.responseStatus === "accepted"
+    // );
+
+    return {
+      success: true,
+      message: "Accepted attendees retrieved successfully",
+      attendees: attendees,
+    };
+  } catch (err: any) {
+    if (err.response?.status === 404) {
+      console.error("Event not found. Verify the event ID or calendar access.");
+      return {
+        success: false,
+        message: "Event not found. Verify the event ID or calendar access.",
+        status: 404,
+        error: err.message,
+      };
     }
-  );
+
+    console.error("Error retrieving event:", err);
+    return {
+      success: false,
+      message: "Error retrieving event",
+      status: 500,
+      error: err.message,
+    };
+  }
 }
+
 
 
 // /**

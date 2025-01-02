@@ -74,30 +74,57 @@ export const generateToken = async (res: NextApiResponse) => {
  * Authorize API requests using an existing or newly generated token.
  * @param callback - Function that requires authorization.
  */
+// export const authorize = async (): Promise<Auth.OAuth2Client> => {
+//   try {
+//     const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, "utf-8"));
+//     const { client_secret, client_id, redirect_uris } = credentials.web;
+
+//     const oAuth2Client = new google.auth.OAuth2(
+//       client_id,
+//       client_secret,
+//       redirect_uris[0]
+//     );
+
+//     // Check if token exists
+//     if (fs.existsSync(TOKEN_PATH)) {
+//       const token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf-8"));
+//       oAuth2Client.setCredentials(token);
+//       return oAuth2Client;
+//     } else {
+//       throw new Error(
+//         "Token not found. Run the token generation process first."
+//       );
+//     }
+//   } catch (err) {
+//     console.error("Error during authorization:", err);
+//     throw err; // Propagate the error to the caller
+//   }
+// };
+ 
+
 export const authorize = async (): Promise<Auth.OAuth2Client> => {
   try {
-    const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, "utf-8"));
-    const { client_secret, client_id, redirect_uris } = credentials.web;
+    // Get credentials from environment variables
+    const client_id = process.env.CLIENT_ID;
+    const client_secret = process.env.CLIENT_SECRET;
+    const redirect_uri = process.env.REDIRECT_URI;
+    const token = process.env.TOKEN;
+
+    if (!client_id || !client_secret || !redirect_uri || !token) {
+      throw new Error("Missing required environment variables.");
+    }
 
     const oAuth2Client = new google.auth.OAuth2(
       client_id,
       client_secret,
-      redirect_uris[0]
+      redirect_uri
     );
 
-    // Check if token exists
-    if (fs.existsSync(TOKEN_PATH)) {
-      const token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf-8"));
-      oAuth2Client.setCredentials(token);
-      return oAuth2Client;
-    } else {
-      throw new Error(
-        "Token not found. Run the token generation process first."
-      );
-    }
+    // Set credentials from environment variable
+    oAuth2Client.setCredentials(JSON.parse(token));
+    return oAuth2Client;
   } catch (err) {
     console.error("Error during authorization:", err);
     throw err; // Propagate the error to the caller
   }
 };
- 
